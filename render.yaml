@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: ton-farm
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm run start
+    healthCheckPath: /api/health
+    envVars:
+      - key: APP_NAME
+        value: TON Farm
+      - key: TON_NETWORK
+        value: mainnet
+      - key: APP_URL
+        sync: false
+      - key: APP_ICON_URL
+        sync: false
+      - key: TON_TREASURY_ADDRESS
+        sync: false
+      - key: TELEGRAM_RETURN_URL
+        sync: false

@@ -1,0 +1,13 @@
+{
+  "name": "ton-farm-mvp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node apps/server/index.mjs",
+    "start": "node apps/server/index.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

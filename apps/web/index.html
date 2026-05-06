@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TON Farm</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Telegram Mini App MVP</p>
+          <h1>TON Farm</h1>
+        </div>
+        <button class="wallet-button" id="connectWallet">TON Connect</button>
+      </header>
+
+      <nav class="tabs" aria-label="Main navigation">
+        <button data-tab="farm" class="active">Farm</button>
+        <button data-tab="bag">Bag</button>
+        <button data-tab="pet">Pets</button>
+        <button data-tab="friends">Raid</button>
+        <button data-tab="market">Market</button>
+        <button data-tab="wallet">Wallet</button>
+      </nav>
+
+      <section class="screen active" id="farm"></section>
+      <section class="screen" id="bag"></section>
+      <section class="screen" id="pet"></section>
+      <section class="screen" id="friends"></section>
+      <section class="screen" id="market"></section>
+      <section class="screen" id="wallet"></section>
+    </main>
+
+    <div class="toast" id="toast" role="status"></div>
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>
