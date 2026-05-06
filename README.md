@@ -8,7 +8,7 @@ An MVP framework for a Telegram Mini App farming game: plant crops, raid friends
 - Dependency-free Node server: demo users, land, seed packs, crop crates, pets, raid logs, and market listings.
 - Harvest claim flow: backend calculates yield and creates a server signature placeholder for future on-chain minting.
 - Marketplace loop: list NFTs, buy listings, and model a 2% fee.
-- Contract sketches: `GameAssetCollection`, `GameManager`, and `Marketplace`.
+- Compileable MVP Tact contracts: `GameAssetCollection`, `GameManager`, and `Marketplace`.
 - PostgreSQL schema for users, farm slots, pets, raid logs, harvest claims, and listings.
 - TON Connect UI integration for wallet connection and real TON payment signing.
 
@@ -36,6 +36,7 @@ TELEGRAM_RETURN_URL=https://t.me/your_bot/your_app
 
 Telegram Mini App deployment steps are in `docs/deploy-telegram.md`.
 Render-specific deployment steps are in `docs/deploy-render.md`.
+Contract build, test, and testnet deploy steps are in `contracts/README.md`.
 
 ## Structure
 

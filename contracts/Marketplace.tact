@@ -1,5 +1,3 @@
-// Tact-style MVP sketch for custodial fixed-price NFT listings.
-
 message ListNft {
   nft: Address;
   price: Int as coins;
@@ -34,8 +32,12 @@ contract Marketplace {
     self.nextListingId = 0;
   }
 
+  receive() {
+    cashback(sender());
+  }
+
   receive(msg: ListNft) {
-    // Production flow should list after the NFT transfer notification arrives.
+    require(msg.price > 0, "invalid price");
     self.listings.set(self.nextListingId, Listing{
       seller: sender(),
       nft: msg.nft,
@@ -49,13 +51,58 @@ contract Marketplace {
     let listing = self.listings.get(msg.listingId)!!;
     require(listing.active, "inactive listing");
     require(context().value >= listing.price, "insufficient TON");
+
     let fee = listing.price * self.feeBps / 10000;
-    // Send fee to treasury, remaining TON to seller, NFT to buyer.
+    let sellerAmount = listing.price - fee;
+
+    self.listings.set(msg.listingId, Listing{
+      seller: listing.seller,
+      nft: listing.nft,
+      price: listing.price,
+      active: false
+    });
+
+    send(SendParameters{
+      to: self.treasury,
+      value: fee,
+      bounce: false,
+      mode: SendIgnoreErrors | SendPayGasSeparately
+    });
+    send(SendParameters{
+      to: listing.seller,
+      value: sellerAmount,
+      bounce: false,
+      mode: SendIgnoreErrors | SendPayGasSeparately
+    });
   }
 
   receive(msg: CancelListing) {
     let listing = self.listings.get(msg.listingId)!!;
     require(sender() == listing.seller, "not seller");
-    // Return NFT to seller and close listing.
+    require(listing.active, "inactive listing");
+
+    self.listings.set(msg.listingId, Listing{
+      seller: listing.seller,
+      nft: listing.nft,
+      price: listing.price,
+      active: false
+    });
+    cashback(sender());
+  }
+
+  get fun feeBps(): Int {
+    return self.feeBps;
+  }
+
+  get fun nextListingId(): Int {
+    return self.nextListingId;
+  }
+
+  get fun listingActive(listingId: Int): Bool {
+    let listing = self.listings.get(listingId);
+    if (listing == null) {
+      return false;
+    }
+    return listing!!.active;
   }
 }

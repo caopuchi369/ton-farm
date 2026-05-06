@@ -1,6 +1,6 @@
 # Contract Deployment Plan
 
-The current contract files are MVP interface sketches. They are not audited production contracts yet.
+The current contract files are compileable MVP contracts with Sandbox tests. They are still not audited production contracts yet.
 
 ## Recommended Stack
 
@@ -75,16 +75,58 @@ For mainnet, change `TON_NETWORK=mainnet` only after the same flow works on test
 
 ## Testnet Checklist
 
-1. Add Blueprint/Tact project tooling.
-2. Implement NFT item and collection from a standard-compatible base.
-3. Add unit tests for claim replay, expired claims, listing, cancel, buy, and fee split.
-4. Deploy Treasury wallet or multisig.
-5. Deploy GameAssetCollection.
-6. Deploy GameManager with server signer public key.
-7. Deploy Marketplace with treasury and fee settings.
-8. Set Render env variables.
-9. Verify `/api/config` shows all contract addresses.
-10. Run wallet connection and a small TON payment from the Mini App.
+1. Run `npm run test:contracts`.
+2. Deploy Treasury wallet or multisig.
+3. Deploy GameAssetCollection.
+4. Deploy GameManager with server signer public key.
+5. Set GameAssetCollection manager to the deployed GameManager.
+6. Deploy Marketplace with treasury and fee settings.
+7. Set Render env variables.
+8. Verify `/api/config` shows all contract addresses.
+9. Run wallet connection and a small TON payment from the Mini App.
+
+## Local Commands
+
+```bash
+npm run build:contracts
+npm run test:contracts
+```
+
+## Testnet Deploy Commands
+
+Set these environment variables in the terminal before deploying:
+
+```bash
+export TREASURY_ADDRESS=<testnet treasury wallet>
+export CONTRACT_OWNER_ADDRESS=<optional owner wallet, defaults to deploy wallet>
+export SERVER_SIGNER_PUBKEY=0
+```
+
+Deploy in this order:
+
+```bash
+npm run build:contracts
+npx blueprint run deployGameAssetCollection --testnet
+export GAME_ASSET_COLLECTION_ADDRESS=<printed collection address>
+npx blueprint run deployGameManager --testnet
+export GAME_MANAGER_ADDRESS=<printed manager address>
+npx blueprint run setGameAssetCollectionManager --testnet
+npx blueprint run deployMarketplace --testnet
+export MARKETPLACE_ADDRESS=<printed marketplace address>
+```
+
+Then set the same addresses in Render:
+
+```text
+TON_NETWORK=testnet
+TREASURY_ADDRESS=<testnet treasury wallet>
+TON_TREASURY_ADDRESS=<testnet treasury wallet>
+GAME_ASSET_COLLECTION_ADDRESS=<collection address>
+GAME_MANAGER_ADDRESS=<manager address>
+MARKETPLACE_ADDRESS=<marketplace address>
+```
+
+For mainnet, repeat the flow with mainnet wallets only after testnet checks pass.
 
 ## Mainnet Gate
 

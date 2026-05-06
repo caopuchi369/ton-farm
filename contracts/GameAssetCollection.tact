@@ -1,25 +1,43 @@
-// Tact-style MVP sketch. Treat this as an interface draft before audit.
-
 message MintAsset {
   owner: Address;
   assetType: String;
   metadata: Cell;
 }
 
-contract GameAssetCollection {
-  owner: Address;
+message SetGameManager {
   gameManager: Address;
-  nextItemIndex: Int as uint64;
+}
 
-  init(owner: Address, gameManager: Address) {
-    self.owner = owner;
-    self.gameManager = gameManager;
-    self.nextItemIndex = 0;
+contract GameAssetCollection(
+  owner: Address,
+  gameManager: Address,
+  nextItemIndex: Int as uint64,
+) {
+  receive() {
+    cashback(sender());
+  }
+
+  receive(msg: SetGameManager) {
+    require(sender() == self.owner, "owner only");
+    self.gameManager = msg.gameManager;
+    cashback(sender());
   }
 
   receive(msg: MintAsset) {
     require(sender() == self.gameManager || sender() == self.owner, "mint not allowed");
-    // Deploy NFT item with collection, index, owner and metadata.
     self.nextItemIndex = self.nextItemIndex + 1;
+    cashback(sender());
+  }
+
+  get fun owner(): Address {
+    return self.owner;
+  }
+
+  get fun gameManager(): Address {
+    return self.gameManager;
+  }
+
+  get fun nextItemIndex(): Int {
+    return self.nextItemIndex;
   }
 }

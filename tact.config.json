@@ -1,0 +1,29 @@
+{
+  "$schema": "https://raw.githubusercontent.com/tact-lang/tact/main/src/config/configSchema.json",
+  "projects": [
+    {
+      "name": "GameAssetCollection",
+      "path": "./contracts/GameAssetCollection.tact",
+      "output": "./build/GameAssetCollection",
+      "options": {
+        "interfacesGetter": true
+      }
+    },
+    {
+      "name": "GameManager",
+      "path": "./contracts/GameManager.tact",
+      "output": "./build/GameManager",
+      "options": {
+        "interfacesGetter": true
+      }
+    },
+    {
+      "name": "Marketplace",
+      "path": "./contracts/Marketplace.tact",
+      "output": "./build/Marketplace",
+      "options": {
+        "interfacesGetter": true
+      }
+    }
+  ]
+}
