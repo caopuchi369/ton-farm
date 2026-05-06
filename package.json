@@ -2,7 +2,6 @@
   "name": "ton-farm-mvp",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "build:contracts": "blueprint build --all",
     "test:contracts": "npm run build:contracts && jest --runInBand",
