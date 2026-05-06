@@ -1,21 +1,30 @@
 import http from "node:http";
+import { readFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 import crypto from "node:crypto";
 
 const root = fileURLToPath(new URL("../web/", import.meta.url));
+const economy = JSON.parse(readFileSync(fileURLToPath(new URL("../../config/economy.json", import.meta.url)), "utf8"));
 const port = Number(process.env.PORT || 4173);
 const staticConfig = {
   appName: process.env.APP_NAME || "TON Farm",
   tonTreasuryAddress: process.env.TON_TREASURY_ADDRESS || "",
   tonNetwork: process.env.TON_NETWORK || "mainnet",
-  telegramReturnUrl: process.env.TELEGRAM_RETURN_URL || ""
+  telegramReturnUrl: process.env.TELEGRAM_RETURN_URL || "",
+  contracts: {
+    gameAssetCollection: process.env.GAME_ASSET_COLLECTION_ADDRESS || "",
+    gameManager: process.env.GAME_MANAGER_ADDRESS || "",
+    marketplace: process.env.MARKETPLACE_ADDRESS || "",
+    treasury: process.env.TREASURY_ADDRESS || process.env.TON_TREASURY_ADDRESS || ""
+  }
 };
 
 function requestOrigin(req) {
   const host = req.headers["x-forwarded-host"] || req.headers.host || `localhost:${port}`;
-  const proto = req.headers["x-forwarded-proto"] || (String(host).startsWith("localhost") ? "http" : "https");
+  const isLocal = String(host).startsWith("localhost") || String(host).startsWith("127.0.0.1");
+  const proto = req.headers["x-forwarded-proto"] || (isLocal ? "http" : "https");
   return `${proto}://${host}`;
 }
 
@@ -27,7 +36,10 @@ function appConfig(req) {
     appIconUrl: `${origin}/icon.svg`,
     tonTreasuryAddress: staticConfig.tonTreasuryAddress,
     tonNetwork: staticConfig.tonNetwork,
-    telegramReturnUrl: staticConfig.telegramReturnUrl
+    telegramReturnUrl: staticConfig.telegramReturnUrl,
+    contracts: staticConfig.contracts,
+    economyVersion: economy.version,
+    marketplaceFeeBps: economy.fees.marketplaceBps
   };
 }
 
@@ -151,6 +163,10 @@ async function api(req, res, path) {
 
     if (req.method === "GET" && path === "/api/config") {
       return json(res, 200, appConfig(req));
+    }
+
+    if (req.method === "GET" && path === "/api/economy") {
+      return json(res, 200, economy);
     }
 
     if (req.method === "GET" && path === "/api/state") {

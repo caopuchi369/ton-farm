@@ -1,0 +1,71 @@
+{
+  "version": "mvp-season-1",
+  "network": "mainnet",
+  "currency": "TON",
+  "fees": {
+    "marketplaceBps": 200,
+    "developerBps": 150,
+    "seasonPoolBps": 50
+  },
+  "pricesTon": {
+    "starterPack": 0,
+    "commonLandExpansion": 0.2,
+    "carrotSeedPack": 0.02,
+    "tomatoSeedPack": 0.05,
+    "strawberrySeedPack": 0.1,
+    "petEgg": 0.15,
+    "toolPack": 0.03
+  },
+  "upgradeCosts": {
+    "petLevel2": {
+      "ton": 0.03,
+      "cropCrateQuantity": 30
+    },
+    "petLevel3": {
+      "ton": 0.06,
+      "cropCrateQuantity": 80
+    }
+  },
+  "crops": {
+    "carrot": {
+      "growthMinutes": 30,
+      "yieldMin": 10,
+      "yieldMax": 15,
+      "seedPackQuantity": 20
+    },
+    "tomato": {
+      "growthMinutes": 120,
+      "yieldMin": 25,
+      "yieldMax": 40,
+      "seedPackQuantity": 10
+    },
+    "strawberry": {
+      "growthMinutes": 360,
+      "yieldMin": 40,
+      "yieldMax": 70,
+      "seedPackQuantity": 5
+    }
+  },
+  "limits": {
+    "landSlotsCommon": 6,
+    "dailyRaidLimit": 20,
+    "dailyRaidSameFriendLimit": 3,
+    "maxStealPercentPerLand": 20,
+    "newAccountAdvancedCropLockHours": 24
+  },
+  "sinks": [
+    "pet-upgrade",
+    "land-expansion",
+    "advanced-seed-synthesis",
+    "tool-consumption",
+    "season-entry",
+    "cosmetic-decoration"
+  ],
+  "guardrails": [
+    "no-fixed-ton-buyback-for-crop-crates",
+    "no-promised-yield",
+    "no-project-token",
+    "ton-only-for-on-chain-nft-settlement",
+    "telegram-stars-for-non-chain-digital-goods"
+  ]
+}

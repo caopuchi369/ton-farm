@@ -6,6 +6,7 @@ const cropMeta = {
 
 let state = null;
 let config = null;
+let economy = null;
 let walletConnected = false;
 let walletAddress = "";
 let tonConnectUI = null;
@@ -58,6 +59,12 @@ async function getConfig() {
   const res = await fetch("/api/config");
   config = await res.json();
   return config;
+}
+
+async function getEconomy() {
+  const res = await fetch("/api/economy");
+  economy = await res.json();
+  return economy;
 }
 
 function getTonConnect() {
@@ -363,6 +370,9 @@ function renderMarket() {
 
 function renderWallet() {
   const connectedAddress = walletAddress || state.walletAddress;
+  const contracts = config?.contracts || {};
+  const configuredContracts = Object.values(contracts).filter(Boolean).length;
+  const marketplaceFee = economy ? `${(economy.fees.marketplaceBps / 100).toFixed(0)}%` : "2%";
   document.querySelector("#wallet").innerHTML = `
     <section class="panel">
       <h2>Wallet</h2>
@@ -370,6 +380,7 @@ function renderWallet() {
         <div class="stat">Status<strong>${walletConnected ? "Connected" : "Not connected"}</strong></div>
         <div class="stat">Address<strong>${shortAddress(connectedAddress)}</strong></div>
         <div class="stat">Balance<strong>${state.tonBalance.toFixed(2)} TON</strong></div>
+        <div class="stat">Contracts<strong>${configuredContracts}/4 set</strong></div>
       </div>
       <div class="wallet-actions">
         <button class="primary" onclick="connectWallet()">Connect / Switch Wallet</button>
@@ -380,6 +391,9 @@ function renderWallet() {
         <span class="tag">Chain Config</span>
         <p>Manifest: ${location.origin}/tonconnect-manifest.json</p>
         <p>Treasury: ${config?.tonTreasuryAddress ? shortAddress(config.tonTreasuryAddress) : "TON_TREASURY_ADDRESS not configured"}</p>
+        <p>Network: ${config?.tonNetwork || "mainnet"} · Economy: ${economy?.version || config?.economyVersion || "mvp-season-1"}</p>
+        <p>Market fee: ${marketplaceFee} · GameAssetCollection: ${shortAddress(contracts.gameAssetCollection)}</p>
+        <p>GameManager: ${shortAddress(contracts.gameManager)} · Marketplace: ${shortAddress(contracts.marketplace)}</p>
         <p>Telegram return: ${config?.telegramReturnUrl || "TELEGRAM_RETURN_URL not configured"}</p>
       </div>
       <h3>Recent Claims</h3>
@@ -510,6 +524,7 @@ window.sendTestPayment = async () => {
 };
 
 await getConfig();
+await getEconomy();
 getTonConnect();
 api("/api/state");
 setInterval(() => api("/api/state").catch(() => {}), 1000);
