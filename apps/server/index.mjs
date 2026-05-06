@@ -6,15 +6,30 @@ import crypto from "node:crypto";
 
 const root = fileURLToPath(new URL("../web/", import.meta.url));
 const port = Number(process.env.PORT || 4173);
-const appUrl = process.env.APP_URL || `http://localhost:${port}`;
-const appConfig = {
-  appUrl,
+const staticConfig = {
   appName: process.env.APP_NAME || "TON Farm",
-  appIconUrl: process.env.APP_ICON_URL || `${appUrl}/icon.svg`,
   tonTreasuryAddress: process.env.TON_TREASURY_ADDRESS || "",
   tonNetwork: process.env.TON_NETWORK || "mainnet",
   telegramReturnUrl: process.env.TELEGRAM_RETURN_URL || ""
 };
+
+function requestOrigin(req) {
+  const host = req.headers["x-forwarded-host"] || req.headers.host || `localhost:${port}`;
+  const proto = req.headers["x-forwarded-proto"] || (String(host).startsWith("localhost") ? "http" : "https");
+  return `${proto}://${host}`;
+}
+
+function appConfig(req) {
+  const origin = requestOrigin(req);
+  return {
+    appUrl: origin,
+    appName: staticConfig.appName,
+    appIconUrl: `${origin}/icon.svg`,
+    tonTreasuryAddress: staticConfig.tonTreasuryAddress,
+    tonNetwork: staticConfig.tonNetwork,
+    telegramReturnUrl: staticConfig.telegramReturnUrl
+  };
+}
 
 const crops = {
   carrot: { name: "Carrot", minutes: 30, growthMs: 30 * 60 * 1000, min: 10, max: 15 },
@@ -129,13 +144,13 @@ async function api(req, res, path) {
     if (req.method === "GET" && path === "/api/health") {
       return json(res, 200, {
         ok: true,
-        service: appConfig.appName,
+        service: staticConfig.appName,
         timestamp: new Date().toISOString()
       });
     }
 
     if (req.method === "GET" && path === "/api/config") {
-      return json(res, 200, appConfig);
+      return json(res, 200, appConfig(req));
     }
 
     if (req.method === "GET" && path === "/api/state") {
@@ -310,17 +325,19 @@ http
     const url = new URL(req.url, `http://${req.headers.host}`);
     if (url.pathname === "/terms" || url.pathname === "/privacy") {
       const title = url.pathname === "/terms" ? "Terms of Use" : "Privacy Policy";
+      const config = appConfig(req);
       res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
-      res.end(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title} · ${appConfig.appName}</title><style>body{font-family:system-ui,sans-serif;max-width:720px;margin:40px auto;padding:0 20px;line-height:1.6;color:#172317}h1{color:#17643a}</style></head><body><h1>${title}</h1><p>${appConfig.appName} is an MVP game demo. Wallet transactions require user confirmation through TON Connect. NFT minting and marketplace settlement are not production contracts until explicitly deployed and audited.</p><p>Contact the project owner for production legal documents before public launch.</p></body></html>`);
+      res.end(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title} · ${config.appName}</title><style>body{font-family:system-ui,sans-serif;max-width:720px;margin:40px auto;padding:0 20px;line-height:1.6;color:#172317}h1{color:#17643a}</style></head><body><h1>${title}</h1><p>${config.appName} is an MVP game demo. Wallet transactions require user confirmation through TON Connect. NFT minting and marketplace settlement are not production contracts until explicitly deployed and audited.</p><p>Contact the project owner for production legal documents before public launch.</p></body></html>`);
       return;
     }
     if (url.pathname === "/tonconnect-manifest.json") {
+      const config = appConfig(req);
       return json(res, 200, {
-        url: appConfig.appUrl,
-        name: appConfig.appName,
-        iconUrl: appConfig.appIconUrl,
-        termsOfUseUrl: `${appConfig.appUrl}/terms`,
-        privacyPolicyUrl: `${appConfig.appUrl}/privacy`
+        url: config.appUrl,
+        name: config.appName,
+        iconUrl: config.appIconUrl,
+        termsOfUseUrl: `${config.appUrl}/terms`,
+        privacyPolicyUrl: `${config.appUrl}/privacy`
       });
     }
     if (url.pathname.startsWith("/api/")) return api(req, res, url.pathname);
