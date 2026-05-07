@@ -7,17 +7,20 @@ import crypto from "node:crypto";
 
 const root = fileURLToPath(new URL("../web/", import.meta.url));
 const economy = JSON.parse(readFileSync(fileURLToPath(new URL("../../config/economy.json", import.meta.url)), "utf8"));
+const testnetDeployment = JSON.parse(readFileSync(fileURLToPath(new URL("../../config/deployments.testnet.json", import.meta.url)), "utf8"));
 const port = Number(process.env.PORT || 4173);
+const configuredNetwork = process.env.TON_NETWORK || testnetDeployment.network || "testnet";
+const useDefaultDeployment = configuredNetwork === testnetDeployment.network;
 const staticConfig = {
   appName: process.env.APP_NAME || "TON Farm",
-  tonTreasuryAddress: process.env.TON_TREASURY_ADDRESS || "",
-  tonNetwork: process.env.TON_NETWORK || "mainnet",
+  tonTreasuryAddress: process.env.TON_TREASURY_ADDRESS || process.env.TREASURY_ADDRESS || (useDefaultDeployment ? testnetDeployment.treasury : ""),
+  tonNetwork: configuredNetwork,
   telegramReturnUrl: process.env.TELEGRAM_RETURN_URL || "",
   contracts: {
-    gameAssetCollection: process.env.GAME_ASSET_COLLECTION_ADDRESS || "",
-    gameManager: process.env.GAME_MANAGER_ADDRESS || "",
-    marketplace: process.env.MARKETPLACE_ADDRESS || "",
-    treasury: process.env.TREASURY_ADDRESS || process.env.TON_TREASURY_ADDRESS || ""
+    gameAssetCollection: process.env.GAME_ASSET_COLLECTION_ADDRESS || (useDefaultDeployment ? testnetDeployment.contracts.gameAssetCollection : ""),
+    gameManager: process.env.GAME_MANAGER_ADDRESS || (useDefaultDeployment ? testnetDeployment.contracts.gameManager : ""),
+    marketplace: process.env.MARKETPLACE_ADDRESS || (useDefaultDeployment ? testnetDeployment.contracts.marketplace : ""),
+    treasury: process.env.TREASURY_ADDRESS || process.env.TON_TREASURY_ADDRESS || (useDefaultDeployment ? testnetDeployment.treasury : "")
   }
 };
 
@@ -324,7 +327,9 @@ async function staticFile(req, res, path) {
     ".html": "text/html; charset=utf-8",
     ".css": "text/css; charset=utf-8",
     ".js": "text/javascript; charset=utf-8",
-    ".json": "application/json; charset=utf-8"
+    ".json": "application/json; charset=utf-8",
+    ".png": "image/png",
+    ".svg": "image/svg+xml"
   };
   try {
     const content = await readFile(filePath);
