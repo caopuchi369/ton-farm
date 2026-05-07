@@ -61,6 +61,34 @@ button:disabled {
   text-shadow: 0 2px 0 rgba(29, 83, 58, 0.18);
 }
 
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.token-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  border: 2px solid rgba(255, 255, 255, 0.72);
+  border-radius: 999px;
+  padding: 4px 12px 4px 5px;
+  color: #fff;
+  background: rgba(17, 79, 122, 0.4);
+  font-size: 13px;
+  font-weight: 900;
+  text-decoration: none;
+  text-shadow: none;
+  box-shadow: 0 5px 0 rgba(24, 54, 29, 0.18);
+}
+
+.token-badge img {
+  width: 30px;
+  height: 30px;
+}
+
 .eyebrow {
   margin: 0 0 4px;
   color: #e8ffbf;
@@ -92,6 +120,12 @@ h1 {
   box-shadow: 0 5px 0 rgba(24, 54, 29, 0.22);
   transform: translateY(0);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.compact {
+  min-height: 32px;
+  padding: 0 10px;
+  font-size: 12px;
 }
 
 .wallet-button:hover,
@@ -513,6 +547,8 @@ h1 {
 
 .hud-card,
 .quest-card,
+.token-card,
+.official-token,
 .panel,
 .asset,
 .friend,
@@ -526,6 +562,8 @@ h1 {
 
 .hud-card,
 .quest-card,
+.token-card,
+.official-token,
 .panel {
   padding: 16px;
 }
@@ -580,6 +618,73 @@ h1 {
   margin-bottom: 0;
   color: var(--muted);
   font-weight: 800;
+}
+
+.token-card {
+  background: linear-gradient(180deg, #e8fbff, #fffdf2);
+}
+
+.token-card-head,
+.official-token-main {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.token-card-head img,
+.official-token-main img {
+  width: 54px;
+  height: 54px;
+  flex: 0 0 auto;
+}
+
+.token-card-head span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.token-card-head strong {
+  display: block;
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+  font-size: 17px;
+}
+
+.token-card p,
+.official-token p {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.token-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.token-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  border-radius: 8px;
+  padding: 0 10px;
+  color: #fff;
+  background: #1671c8;
+  font-size: 12px;
+  font-weight: 900;
+  text-decoration: none;
+  box-shadow: 0 4px 0 rgba(24, 54, 29, 0.2);
+}
+
+.button-link {
+  min-height: 40px;
+  padding: 0 14px;
 }
 
 .muted {
@@ -673,6 +778,41 @@ h1 {
   border-radius: 8px;
   padding: 12px;
   background: #fffef7;
+}
+
+.official-token {
+  margin: 12px 0 18px;
+  background: linear-gradient(180deg, #e9faff, #fffdf2);
+}
+
+.official-token h3 {
+  margin: 8px 0 0;
+  font-size: 28px;
+}
+
+.token-address-row {
+  display: grid;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.token-address-row span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.token-address-row code {
+  display: block;
+  overflow-wrap: anywhere;
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  background: #fffef7;
+  color: #18354e;
+  font-size: 13px;
+  font-weight: 900;
 }
 
 .chain-note p {

@@ -4,6 +4,14 @@ const cropMeta = {
   strawberry: { label: "Strawberry", icon: "🍓", sprout: "🌱", mid: "🌸" }
 };
 
+const cropToken = {
+  symbol: "CROP",
+  address: "EQC5oSYf6vio61OmqVosJiEdpZhoHhKOjH6HQd4HoQvYQQcP",
+  network: "TON mainnet",
+  description:
+    "CROP is the governance token for TON Farm. It can also be considered a meme token, possessing no practical utility or intrinsic value."
+};
+
 let state = null;
 let config = null;
 let economy = null;
@@ -41,6 +49,10 @@ function toast(message) {
 function shortAddress(address) {
   if (!address) return "Not connected";
   return `${address.slice(0, 6)}...${address.slice(-6)}`;
+}
+
+function tonviewerLink(address) {
+  return `https://tonviewer.com/${address}`;
 }
 
 async function api(path, body) {
@@ -227,6 +239,20 @@ function renderFarm() {
           <span>Coins</span>
           <strong>${state.tonBalance.toFixed(2)} TON</strong>
         </div>
+        <div class="token-card">
+          <div class="token-card-head">
+            <img src="/crop-logo.png" alt="CROP token logo" />
+            <div>
+              <span>CROP Token</span>
+              <strong>${shortAddress(cropToken.address)}</strong>
+            </div>
+          </div>
+          <p>${cropToken.description}</p>
+          <div class="token-links">
+            <button class="secondary compact" onclick="copyCropAddress()">Copy</button>
+            <a class="token-link" href="${tonviewerLink(cropToken.address)}" target="_blank" rel="noreferrer">Tonviewer</a>
+          </div>
+        </div>
         <div class="hud-grid">
           <div><span>Growing</span><strong>${growing}</strong></div>
           <div><span>Ready</span><strong>${readyCount}</strong></div>
@@ -387,6 +413,24 @@ function renderWallet() {
         <button class="secondary" onclick="sendTestPayment()">Test Pay 0.01 TON</button>
         <button class="danger" onclick="disconnectWallet()" ${walletConnected ? "" : "disabled"}>Disconnect</button>
       </div>
+      <div class="official-token">
+        <div class="official-token-main">
+          <img src="/crop-logo.png" alt="CROP token logo" />
+          <div>
+            <span class="tag">Official Token</span>
+            <h3>CROP</h3>
+            <p>${cropToken.description}</p>
+          </div>
+        </div>
+        <div class="token-address-row">
+          <span>${cropToken.network}</span>
+          <code>${cropToken.address}</code>
+        </div>
+        <div class="wallet-actions">
+          <button class="secondary" onclick="copyCropAddress()">Copy CROP Address</button>
+          <a class="token-link button-link" href="${tonviewerLink(cropToken.address)}" target="_blank" rel="noreferrer">Open Tonviewer</a>
+        </div>
+      </div>
       <div class="chain-note">
         <span class="tag">Chain Config</span>
         <p>Manifest: ${location.origin}/tonconnect-manifest.json</p>
@@ -520,6 +564,15 @@ window.sendTestPayment = async () => {
     await sendTonPayment({ amountTon: 0.01, label: "0.01 TON test payment" });
   } catch (error) {
     toast(error.message);
+  }
+};
+
+window.copyCropAddress = async () => {
+  try {
+    await navigator.clipboard.writeText(cropToken.address);
+    toast("CROP address copied");
+  } catch {
+    toast(cropToken.address);
   }
 };
 
