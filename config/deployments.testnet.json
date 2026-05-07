@@ -1,0 +1,10 @@
+{
+    "network": "testnet",
+    "deployer": "kQAybtR82Bm8vq_odh747DqouOrO6Drnud_n8nhdO9YTcbmL",
+    "treasury": "0QAlcqVi85S-Jr0szDkS_UYsd1_PoDwvbifuFjghAmYRdfoK",
+    "contracts": {
+          "gameAssetCollection": "kQCbozHNIbtAP8_yjJzUtkCHb_8hiPaYV2lCNvBmfnbpP0yQ",
+          "gameManager": "kQCL-IIMifaojC6fUh3o-sSYT2vEdaRy5K7pxzsHY3wBksrc",
+          "marketplace": "kQBHaZhNc2UVG_kdi-h9ExWyUVD2HB8mk1cS723cElY4D51x"
+    }
+}
